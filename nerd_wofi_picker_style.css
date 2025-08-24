@@ -1,0 +1,11 @@
+/* ~/.config/wofi/style.css */
+* {
+	font-family: "MesloLGS Nerd Font", "Fira Code Nerd Font", monospace;
+}
+#input {
+	font-size: 14pt;
+	padding: 8px;
+}
+#list {
+	font-size: 12pt;
+}
