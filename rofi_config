@@ -1,0 +1,31 @@
+configuration {
+    modi: "dmenu";
+    font: "MesloLGS Nerd Font 12";
+    show-icons: false;
+    terminal: "foot";
+    drun-display-format: "{name}";
+    location: 0;
+    disable-history: true;
+    hide-scrollbar: true;
+    display-dmenu: "NerdFont:";
+    sidebar-mode: false;
+    matching: "fuzzy";
+    sort: true;
+    scroll-method: 0;
+    window-format: "{w}    {c}   {t}";
+    click-to-exit: true;
+    show-match: true;
+    case-sensitive: false;
+    cycle: true;
+    filter: "";
+    separator-style: "none";
+    hide-scrollbar: true;
+    fullscreen: false;
+    fake-transparency: false;
+    dpi: -1;
+    threads: 0;
+    scrollbar-width: 8;
+    scroll-method: 0;
+    fake-background: "screenshot";
+    window-thumbnail: false;
+}

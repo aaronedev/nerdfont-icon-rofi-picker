@@ -1,0 +1,142 @@
+* {
+    background-color: rgba(40, 44, 52, 0.95);
+    border-color: #61afef;
+    text-color: #abb2bf;
+    spacing: 0;
+    width: 600px;
+}
+
+window {
+    background-color: rgba(40, 44, 52, 0.95);
+    border: 2px solid #61afef;
+    border-radius: 12px;
+    padding: 16px;
+    location: center;
+    anchor: center;
+}
+
+mainbox {
+    background-color: transparent;
+    children: [ inputbar, listview ];
+    spacing: 12px;
+}
+
+inputbar {
+    background-color: rgba(55, 59, 65, 0.8);
+    text-color: #abb2bf;
+    border: 1px solid #4a5568;
+    border-radius: 8px;
+    padding: 12px 16px;
+    children: [ prompt, textbox-prompt-sep, entry ];
+}
+
+prompt {
+    background-color: transparent;
+    text-color: #61afef;
+    font: "MesloLGS Nerd Font Bold 14";
+}
+
+textbox-prompt-sep {
+    expand: false;
+    str: " ";
+    background-color: transparent;
+}
+
+entry {
+    background-color: transparent;
+    text-color: #abb2bf;
+    placeholder-color: #5c6370;
+    cursor-color: #61afef;
+    font: "MesloLGS Nerd Font 14";
+}
+
+listview {
+    background-color: transparent;
+    padding: 0px;
+    columns: 1;
+    lines: 15;
+    cycle: true;
+    dynamic: true;
+    scrollbar: false;
+    layout: vertical;
+    reverse: false;
+    fixed-height: true;
+    fixed-columns: true;
+    spacing: 2px;
+}
+
+element {
+    background-color: transparent;
+    text-color: #abb2bf;
+    orientation: horizontal;
+    border-radius: 6px;
+    padding: 10px 16px;
+    border: 0px;
+}
+
+element normal.normal {
+    background-color: transparent;
+    text-color: #abb2bf;
+}
+
+element normal.urgent {
+    background-color: #e06c75;
+    text-color: #282c34;
+}
+
+element normal.active {
+    background-color: #98c379;
+    text-color: #282c34;
+}
+
+element selected.normal {
+    background-color: linear-gradient(90deg, #61afef, #56b6c2);
+    text-color: #282c34;
+    font: "MesloLGS Nerd Font Bold 13";
+}
+
+element selected.urgent {
+    background-color: #e06c75;
+    text-color: #ffffff;
+}
+
+element selected.active {
+    background-color: #98c379;
+    text-color: #282c34;
+}
+
+element alternate.normal {
+    background-color: rgba(55, 59, 65, 0.3);
+    text-color: #abb2bf;
+}
+
+element alternate.urgent {
+    background-color: #e06c75;
+    text-color: #282c34;
+}
+
+element alternate.active {
+    background-color: #98c379;
+    text-color: #282c34;
+}
+
+element-text {
+    background-color: transparent;
+    text-color: inherit;
+    highlight: #61afef;
+    cursor-color: #61afef;
+}
+
+element-icon {
+    background-color: transparent;
+    size: 1.2em;
+    cursor-color: #61afef;
+}
+
+scrollbar {
+    width: 4px;
+    border: 0px;
+    handle-color: #61afef;
+    handle-width: 8px;
+    padding: 0;
+}

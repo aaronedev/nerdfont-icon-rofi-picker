@@ -14,9 +14,11 @@ fi
 SCRIPT_DIR="${0%/*}"
 DATA_DIR="$SCRIPT_DIR/data"
 NERD_TXT_FILE="$DATA_DIR/nerdfont.txt"
-CACHE_DIR="$HOME/.cache/nerd-wofi"
+CACHE_DIR="$HOME/.cache/nerd-rofi"
 PROCESSED_CACHE="$CACHE_DIR/nerdfont_processed.txt"
-STYLE_FILE="$SCRIPT_DIR/nerd_wofi_picker_style.css"
+# STYLE_FILE="$SCRIPT_DIR/nerd_rofi_picker.rasi"
+STYLE_FILE="$HOME/.config/rofi/config.rasi"
+CONFIG_FILE="$SCRIPT_DIR/rofi_config"
 mkdir -p "$CACHE_DIR"
 
 # Initialize or update submodule if needed
@@ -36,7 +38,7 @@ fi
 if [ "$SHOULD_UPDATE" = true ] || [ "$FORCE_UPDATE" = true ]; then
   echo "Updating NerdFont data..."
   if (cd "$SCRIPT_DIR" && git submodule update --remote --merge data); then
-    date +%s > "$LAST_UPDATE_FILE"
+    date +%s >"$LAST_UPDATE_FILE"
     rm -f "$PROCESSED_CACHE"
   else
     echo "Warning: Failed to update NerdFont data, using existing version" >&2
@@ -52,7 +54,7 @@ if [ ! -f "$PROCESSED_CACHE" ] || [ "$NERD_TXT_FILE" -nt "$PROCESSED_CACHE" ]; t
     desc = $0
     gsub(/^[ \t]+/, "", desc)
     printf "%s  %s\n", glyph, desc
-  }' "$NERD_TXT_FILE" > "$PROCESSED_CACHE"
+  }' "$NERD_TXT_FILE" >"$PROCESSED_CACHE"
 fi
 
 # Determine optimal lines based on terminal height
@@ -60,27 +62,30 @@ LINES=$(($(tput lines 2>/dev/null || echo 40) / 2))
 LINES=$((LINES > 15 ? LINES : 15))
 LINES=$((LINES < 40 ? LINES : 40))
 
-# Show via wofi with enhanced styling
-WOFI_ARGS=(
-  --dmenu
-  --insensitive
-  --lines "$LINES"
-  --width 600
-  --height 400
-  --prompt "NerdFont:"
-  --matching fuzzy
-  --sort-order alphabetical
-  --no-actions
-  --allow-markup
-  --cache-file /dev/null
+# Show via rofi with isolated configuration
+ROFI_ARGS=(
+  -dmenu
+  -i
+  -lines "$LINES"
+  -p "NerdFont:"
+  -matching fuzzy
+  -sort
+  -no-custom
+  -format "s"
+  -markup-rows
 )
 
-# Add custom style if available
-if [ -f "$STYLE_FILE" ]; then
-  WOFI_ARGS+=(--style "$STYLE_FILE")
+# Use isolated config and theme files
+if [ -f "$CONFIG_FILE" ]; then
+  ROFI_ARGS+=(-config "$CONFIG_FILE")
 fi
 
-CHOICE=$(cat "$PROCESSED_CACHE" | wofi "${WOFI_ARGS[@]}") || exit 1
+if [ -f "$STYLE_FILE" ]; then
+  ROFI_ARGS+=(-theme "$STYLE_FILE")
+fi
+
+# Run rofi with clean environment to avoid config conflicts
+CHOICE=$(cat "$PROCESSED_CACHE" | env -i HOME="$HOME" PATH="$PATH" DISPLAY="$DISPLAY" WAYLAND_DISPLAY="$WAYLAND_DISPLAY" XDG_RUNTIME_DIR="$XDG_RUNTIME_DIR" rofi "${ROFI_ARGS[@]}") || exit 1
 
 # Extract glyph (first token) and description (rest)
 GLYPH=$(awk '{print $1; exit}' <<<"$CHOICE")
