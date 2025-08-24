@@ -1,142 +1,107 @@
+configuration {
+  modes: "window,run,ssh,drun";
+  sorting-method: "normal";
+  show-icons: true;
+  matching: "regex";
+  drun-match-fields: "name";
+  display-run: "Menu:";
+  display-ssh: "SSH:";
+  display-drun: "Apps:";
+  display-window: "Windows:";
+}
+
+@theme "violet-void-theme"
+
 * {
-    background-color: rgba(40, 44, 52, 0.95);
-    border-color: #61afef;
-    text-color: #abb2bf;
-    spacing: 0;
-    width: 600px;
+  font: "DejaVuSans Nerd Fonts Mono 17";
+  background-color: transparent;
+  text-color: @fg0;
+  margin: 0px;
+  padding: 0px;
+  spacing: 0px;
 }
 
 window {
-    background-color: rgba(40, 44, 52, 0.95);
-    border: 2px solid #61afef;
-    border-radius: 12px;
-    padding: 16px;
-    location: center;
-    anchor: center;
+  location: center;
+  width: 765;
+  y-offset: -20;
+  border-radius: 17px;
+
+  border: 1px;
+  border-color: @bg3;
+  background-color: @bg0;
 }
 
 mainbox {
-    background-color: transparent;
-    children: [ inputbar, listview ];
-    spacing: 12px;
+  padding: 12px;
 }
 
 inputbar {
-    background-color: rgba(55, 59, 65, 0.8);
-    text-color: #abb2bf;
-    border: 1px solid #4a5568;
-    border-radius: 8px;
-    padding: 12px 16px;
-    children: [ prompt, textbox-prompt-sep, entry ];
+  background-color: @bg1;
+  border-color: @bg3;
+  border-radius: 16px;
+  border: 2px;
+  padding: 8px 16px;
+  spacing: 8px;
+  children:
+    [ prompt,
+    entry];
 }
 
 prompt {
-    background-color: transparent;
-    text-color: #61afef;
-    font: "MesloLGS Nerd Font Bold 14";
-}
-
-textbox-prompt-sep {
-    expand: false;
-    str: " ";
-    background-color: transparent;
+  text-color: @blue;
 }
 
 entry {
-    background-color: transparent;
-    text-color: #abb2bf;
-    placeholder-color: #5c6370;
-    cursor-color: #61afef;
-    font: "MesloLGS Nerd Font 14";
+  placeholder: "Search";
+  placeholder-color: @cyan;
+}
+
+message {
+  margin: 12px 0 0;
+  border-radius: 16px;
+  border-color: @bg2;
+  background-color: @bg2;
+}
+
+textbox {
+  padding: 8px 24px;
+  background-color: @bg2;
 }
 
 listview {
-    background-color: transparent;
-    padding: 0px;
-    columns: 1;
-    lines: 15;
-    cycle: true;
-    dynamic: true;
-    scrollbar: false;
-    layout: vertical;
-    reverse: false;
-    fixed-height: true;
-    fixed-columns: true;
-    spacing: 2px;
+  background-color: transparent;
+  margin: 12px 0 0;
+  columns: 2;
+  lines: 10;
+
+  fixed-height: false;
 }
 
 element {
-    background-color: transparent;
-    text-color: #abb2bf;
-    orientation: horizontal;
-    border-radius: 6px;
-    padding: 10px 16px;
-    border: 0px;
+  padding: 8px 16px;
+  spacing: 8px;
+  border-radius: 16px;
 }
 
-element normal.normal {
-    background-color: transparent;
-    text-color: #abb2bf;
+element normal urgent {
+  text-color: @urgent;
 }
 
-element normal.urgent {
-    background-color: #e06c75;
-    text-color: #282c34;
+element normal active {
+  text-color: @accent;
 }
 
-element normal.active {
-    background-color: #98c379;
-    text-color: #282c34;
-}
-
-element selected.normal {
-    background-color: linear-gradient(90deg, #61afef, #56b6c2);
-    text-color: #282c34;
-    font: "MesloLGS Nerd Font Bold 13";
-}
-
-element selected.urgent {
-    background-color: #e06c75;
-    text-color: #ffffff;
-}
-
-element selected.active {
-    background-color: #98c379;
-    text-color: #282c34;
-}
-
-element alternate.normal {
-    background-color: rgba(55, 59, 65, 0.3);
-    text-color: #abb2bf;
-}
-
-element alternate.urgent {
-    background-color: #e06c75;
-    text-color: #282c34;
-}
-
-element alternate.active {
-    background-color: #98c379;
-    text-color: #282c34;
-}
-
-element-text {
-    background-color: transparent;
-    text-color: inherit;
-    highlight: #61afef;
-    cursor-color: #61afef;
+element selected normal,
+element selected active {
+  background-color: @bg2;
 }
 
 element-icon {
-    background-color: transparent;
-    size: 1.2em;
-    cursor-color: #61afef;
+  size: 1em;
+  vertical-align: 0.5;
 }
 
-scrollbar {
-    width: 4px;
-    border: 0px;
-    handle-color: #61afef;
-    handle-width: 8px;
-    padding: 0;
+element-text {
+  text-color: inherit;
 }
