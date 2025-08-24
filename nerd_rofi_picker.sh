@@ -53,7 +53,8 @@ if [ ! -f "$PROCESSED_CACHE" ] || [ "$NERD_TXT_FILE" -nt "$PROCESSED_CACHE" ]; t
     $1 = ""
     desc = $0
     gsub(/^[ \t]+/, "", desc)
-    printf "%s  %s\n", glyph, desc
+    # Add consistent spacing to handle double-width icons
+    printf "%-4s %s\n", glyph, desc
   }' "$NERD_TXT_FILE" >"$PROCESSED_CACHE"
 fi
 
