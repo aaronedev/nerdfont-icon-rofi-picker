@@ -13,7 +13,7 @@ configuration {
 @theme "violet-void-theme"
 
 * {
-  font: "DejaVuSans Nerd Fonts Mono 17";
+  font: "DejaVuSans Nerd Fonts Mono 26";
   background-color: transparent;
   text-color: @fg0;
   margin: 0px;
@@ -23,7 +23,7 @@ configuration {
 
 window {
   location: center;
-  width: 765;
+  width: 900;
   y-offset: -20;
   border-radius: 17px;
 
@@ -73,7 +73,7 @@ listview {
   background-color: transparent;
   margin: 12px 0 0;
   columns: 2;
-  lines: 10;
+  lines: 20;
 
   fixed-height: false;
 }
@@ -98,7 +98,7 @@ element selected active {
 }
 
 element-icon {
-  size: 1em;
+  size: 0.5em;
   vertical-align: 0.5;
 }
 
