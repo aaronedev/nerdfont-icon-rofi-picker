@@ -23,26 +23,26 @@ configuration {
 
 window {
   location: center;
-  width: 900;
-  y-offset: -20;
-  border-radius: 17px;
+  width: 25em;
+  y-offset: -0.75em;
+  border-radius: 0.65em;
 
-  border: 1px;
+  border: 0.04em;
   border-color: @bg3;
   background-color: @bg0;
 }
 
 mainbox {
-  padding: 12px;
+  padding: 0.45em;
 }
 
 inputbar {
   background-color: @bg1;
   border-color: @bg3;
-  border-radius: 16px;
-  border: 2px;
-  padding: 8px 16px;
-  spacing: 8px;
+  border-radius: 0.6em;
+  border: 0.075em;
+  padding: 0.3em 0.6em;
+  spacing: 0.3em;
   children:
     [ prompt,
     entry];
@@ -58,30 +58,30 @@ entry {
 }
 
 message {
-  margin: 12px 0 0;
-  border-radius: 16px;
+  margin: 0.45em 0 0;
+  border-radius: 0.6em;
   border-color: @bg2;
   background-color: @bg2;
 }
 
 textbox {
-  padding: 8px 24px;
+  padding: 0.3em 0.9em;
   background-color: @bg2;
 }
 
 listview {
   background-color: transparent;
-  margin: 12px 0 0;
+  margin: 0.45em 0 0;
   columns: 2;
-  lines: 20;
+  lines: 12;
 
   fixed-height: false;
 }
 
 element {
-  padding: 8px 16px;
-  spacing: 8px;
-  border-radius: 16px;
+  padding: 0.3em 0.6em;
+  spacing: 0.3em;
+  border-radius: 0.6em;
 }
 
 element normal urgent {
