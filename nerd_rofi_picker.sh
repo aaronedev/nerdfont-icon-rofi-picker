@@ -11,7 +11,18 @@ else
 fi
 
 # CONFIG: Paths and settings
-SCRIPT_DIR="${0%/*}"
+SCRIPT_PATH="${BASH_SOURCE[0]}"
+if command -v readlink >/dev/null 2>&1; then
+  if SCRIPT_REALPATH=$(readlink -f "$SCRIPT_PATH" 2>/dev/null); then
+    SCRIPT_PATH="$SCRIPT_REALPATH"
+  fi
+fi
+while [ -h "$SCRIPT_PATH" ]; do
+  SCRIPT_DIR="$(cd -P "$(dirname "$SCRIPT_PATH")" && pwd)"
+  SCRIPT_PATH="$(readlink "$SCRIPT_PATH")"
+  [[ $SCRIPT_PATH != /* ]] && SCRIPT_PATH="$SCRIPT_DIR/$SCRIPT_PATH"
+done
+SCRIPT_DIR="$(cd -P "$(dirname "$SCRIPT_PATH")" && pwd)"
 DATA_DIR="$SCRIPT_DIR/data"
 NERD_TXT_FILE="$DATA_DIR/nerdfont.txt"
 CACHE_DIR="$HOME/.cache/nerd-rofi"
