@@ -86,7 +86,35 @@ if [ -f "$STYLE_FILE" ]; then
 fi
 
 # Run rofi with clean environment to avoid config conflicts
-CHOICE=$(cat "$PROCESSED_CACHE" | env -i HOME="$HOME" PATH="$PATH" DISPLAY="$DISPLAY" WAYLAND_DISPLAY="$WAYLAND_DISPLAY" XDG_RUNTIME_DIR="$XDG_RUNTIME_DIR" rofi "${ROFI_ARGS[@]}") || exit 1
+declare -a CLEAN_ENV=()
+declare -A CLEAN_ENV_SEEN=()
+
+add_env_var() {
+  local name="$1"
+  local value="${2-}"
+  if [[ -n "${CLEAN_ENV_SEEN[$name]:-}" ]]; then
+    return
+  fi
+  CLEAN_ENV+=("$name=$value")
+  CLEAN_ENV_SEEN[$name]=1
+}
+
+add_env_var HOME "${HOME-}"
+add_env_var PATH "${PATH-}"
+add_env_var DISPLAY "${DISPLAY-}"
+add_env_var WAYLAND_DISPLAY "${WAYLAND_DISPLAY-}"
+add_env_var XDG_RUNTIME_DIR "${XDG_RUNTIME_DIR-}"
+
+add_env_var LANG "${LANG-}"
+add_env_var LC_ALL "${LC_ALL-}"
+add_env_var LC_CTYPE "${LC_CTYPE-}"
+
+while IFS= read -r env_name; do
+  [[ $env_name == LC_* ]] || continue
+  add_env_var "$env_name" "${!env_name-}"
+done < <(compgen -e)
+
+CHOICE=$(cat "$PROCESSED_CACHE" | env -i "${CLEAN_ENV[@]}" rofi "${ROFI_ARGS[@]}") || exit 1
 
 # Extract glyph (first token) and description (rest)
 GLYPH=$(awk '{print $1; exit}' <<<"$CHOICE")
