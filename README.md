@@ -1,6 +1,15 @@
 # Nerd Font Rofi Picker
 
-A simple rofi-based picker for nerd font icons. Browse through thousands of icons with fuzzy search and copy them to your clipboard.
+A simple rofi-based picker for nerd font icons. Browse through thousands of
+icons with fuzzy search and copy them to your clipboard.
+
+## Installation
+
+```bash
+  git submodule update --init --recursive
+  chmod +x nerd_rofi_picker.sh
+  ./nerd_rofi_picker.sh
+```
 
 ## Usage
 
@@ -26,6 +35,9 @@ A simple rofi-based picker for nerd font icons. Browse through thousands of icon
 
 ## How it works
 
-The script uses a git submodule to fetch the latest nerd font data, processes it for better performance, and presents it through rofi with a nice theme. Icons are automatically copied to your clipboard when selected.
+The script uses a git submodule to fetch the latest nerd font data, processes it
+for better performance, and presents it through rofi with a nice theme. Icons
+are automatically copied to your clipboard when selected.
 
-Data updates automatically once a week, or you can force an update with the `--update` flag.
+Data updates automatically once a week, or you can force an update with the
+`--update` flag.
