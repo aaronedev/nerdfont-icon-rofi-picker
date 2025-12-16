@@ -10,19 +10,24 @@ else
   FORCE_UPDATE=false
 fi
 
-# CONFIG: Paths and settings
-SCRIPT_PATH="${BASH_SOURCE[0]}"
-if command -v readlink >/dev/null 2>&1; then
-  if SCRIPT_REALPATH=$(readlink -f "$SCRIPT_PATH" 2>/dev/null); then
-    SCRIPT_PATH="$SCRIPT_REALPATH"
+# CONFIG: Paths and settingsget_script_dir() {
+  local script_path="${BASH_SOURCE[0]}"
+  if command -v readlink >/dev/null 2>&1; then
+    if SCRIPT_REALPATH=$(readlink -f "$script_path" 2>/dev/null); then
+      script_path="$SCRIPT_REALPATH"
+    fi
   fi
-fi
-while [ -h "$SCRIPT_PATH" ]; do
-  SCRIPT_DIR="$(cd -P "$(dirname "$SCRIPT_PATH")" && pwd)"
-  SCRIPT_PATH="$(readlink "$SCRIPT_PATH")"
-  [[ $SCRIPT_PATH != /* ]] && SCRIPT_PATH="$SCRIPT_DIR/$SCRIPT_PATH"
-done
-SCRIPT_DIR="$(cd -P "$(dirname "$SCRIPT_PATH")" && pwd)"
+  while [ -h "$script_path" ]; do
+    local script_dir="$(cd -P "$(dirname "$script_path")" && pwd)"
+    script_path="$(readlink "$script_path")"
+    [[ $script_path != /* ]] && script_path="$script_dir/$script_path"
+  done
+  echo "$(cd -P "$(dirname "$script_path")" && pwd)"
+}
+
+
+# CONFIG: Paths and settings
+SCRIPT_DIR=$(get_script_dir)
 DATA_DIR="$SCRIPT_DIR/data"
 NERD_TXT_FILE="$DATA_DIR/nerdfont.txt"
 CACHE_DIR="$HOME/.cache/nerd-rofi"
@@ -131,14 +136,20 @@ CHOICE=$(cat "$PROCESSED_CACHE" | env -i "${CLEAN_ENV[@]}" rofi "${ROFI_ARGS[@]}
 GLYPH=$(awk '{print $1; exit}' <<<"$CHOICE")
 DESC=$(awk '{$1=""; sub(/^ /,""); print}' <<<"$CHOICE")
 
+# Function to copy text to the system clipboard
+copy_to_clipboard() {
+  local text="$1"
+  if command -v wl-copy >/dev/null 2>&1; then
+    printf "%s" "$text" | wl-copy
+  elif command -v xclip >/dev/null 2>&1; then
+    printf "%s" "$text" | xclip -selection clipboard
+  else
+    printf "%s\n" "$text"
+  fi
+}
+
 # copy to clipboard (Wayland wl-copy; fall back to xclip)
-if command -v wl-copy >/dev/null 2>&1; then
-  printf "%s" "$GLYPH" | wl-copy
-elif command -v xclip >/dev/null 2>&1; then
-  printf "%s" "$GLYPH" | xclip -selection clipboard
-else
-  printf "%s\n" "$GLYPH"
-fi
+copy_to_clipboard "$GLYPH"
 
 # optional: type the glyph using wtype (Wayland) or xdotool for X
 # if command -v wtype >/dev/null 2>&1; then
