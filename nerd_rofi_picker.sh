@@ -85,7 +85,7 @@ ROFI_ARGS=(
   -dmenu
   -i
   -lines "$LINES"
-  -p "NerdFont:"
+  -p "󰣇 "
   -matching fuzzy
   -sort
   -no-custom

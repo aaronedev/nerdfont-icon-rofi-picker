@@ -10,98 +10,113 @@ configuration {
   display-window: "Windows:";
 }
 
-@theme "violet-void-theme"
-
 * {
-  font: "DejaVuSans Nerd Fonts Mono 26";
-  background-color: transparent;
-  text-color: @fg0;
+  /* Catppuccin-like palette from fuzzel.ini */
+  bg-col:  #1e1e2e;
+  bg-col-light: #1e1e2e;
+  border-col: #ad80ff;
+  selected-col: #585b70;
+  blue: #89b4fa;
+  fg-col: #cdd6f4;
+  fg-col2: #cdd6f4;
+  grey: #6c7086;
+  prompt-col: #bac2de;
+
+  font: "JetBrainsMono Nerd Font 12";
+  background-color: @bg-col;
+  text-color: @fg-col;
   margin: 0px;
   padding: 0px;
   spacing: 0px;
 }
 
 window {
+  transparency: "real";
   location: center;
-  width: 25em;
-  y-offset: -0.75em;
-  border-radius: 0.65em;
-
-  border: 0.04em;
-  border-color: @bg3;
-  background-color: @bg0;
+  width: 50%; /* Bigger width for 2 columns */
+  border-radius: 12px; /* Matches fuzzel radius=12 */
+  border: 3px;         /* Matches fuzzel width=3 */
+  border-color: @border-col;
+  background-color: @bg-col;
 }
 
 mainbox {
-  padding: 0.45em;
+  padding: 12px; /* vertical-pad=12 */
 }
 
 inputbar {
-  background-color: @bg1;
-  border-color: @bg3;
-  border-radius: 0.6em;
-  border: 0.075em;
-  padding: 0.3em 0.6em;
-  spacing: 0.3em;
-  children:
-    [ prompt,
-    entry];
+  background-color: @bg-col;
+  border-radius: 6px;
+  padding: 2px;
+  children: [ prompt, entry ];
+  spacing: 12px;
 }
 
 prompt {
-  text-color: @blue;
+  text-color: @prompt-col;
+  font: "JetBrainsMono Nerd Font Bold 14";
+  margin: 0px;
+  enabled: true;
 }
 
 entry {
   placeholder: "Search";
-  placeholder-color: @cyan;
+  placeholder-color: @grey;
+  text-color: @fg-col;
+  background-color: @bg-col;
 }
 
 message {
-  margin: 0.45em 0 0;
-  border-radius: 0.6em;
-  border-color: @bg2;
-  background-color: @bg2;
+  margin: 2px;
+  padding: 2px;
+  background-color: @bg-col;
+  text-color: @fg-col;
 }
 
 textbox {
-  padding: 0.3em 0.9em;
-  background-color: @bg2;
+  padding: 6px;
+  margin: 20px 0px 0px 20px;
+  text-color: @fg-col;
+  background-color: @bg-col;
 }
 
 listview {
-  background-color: transparent;
-  margin: 0.45em 0 0;
-  columns: 2;
+  border: 0px 0px 0px;
+  padding: 6px 0px 0px;
+  margin: 10px 0px 0px 0px;
+  columns: 2; /* "Show 2 rows" interpreted as 2 columns */
   lines: 12;
-
+  background-color: @bg-col;
   fixed-height: false;
 }
 
 element {
-  padding: 0.3em 0.6em;
-  spacing: 0.3em;
-  border-radius: 0.6em;
+  padding: 8px; /* inner-pad=6ish */
+  background-color: @bg-col;
+  text-color: @fg-col;
 }
 
 element normal urgent {
-  text-color: @urgent;
+  text-color: @blue;
 }
 
 element normal active {
-  text-color: @accent;
+  text-color: @blue;
 }
 
 element selected normal,
 element selected active {
-  background-color: @bg2;
+  background-color: @selected-col;
+  text-color: @fg-col;
+  border-radius: 8px; /* selection-radius=8 */
 }
 
 element-icon {
-  size: 0.5em;
+  size: 24px;
   vertical-align: 0.5;
 }
 
 element-text {
+  vertical-align: 0.5;
   text-color: inherit;
 }
