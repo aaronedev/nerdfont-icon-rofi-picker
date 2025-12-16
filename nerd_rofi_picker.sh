@@ -10,7 +10,8 @@ else
   FORCE_UPDATE=false
 fi
 
-# CONFIG: Paths and settingsget_script_dir() {
+# CONFIG: Paths and settings
+get_script_dir() {
   local script_path="${BASH_SOURCE[0]}"
   if command -v readlink >/dev/null 2>&1; then
     if SCRIPT_REALPATH=$(readlink -f "$script_path" 2>/dev/null); then
