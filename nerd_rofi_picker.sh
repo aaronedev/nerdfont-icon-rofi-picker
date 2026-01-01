@@ -85,6 +85,11 @@ if [ "$SHOULD_UPDATE" = true ] || [ "$FORCE_UPDATE" = true ]; then
   fi
 fi
 
+if [ ! -f "$NERD_TXT_FILE" ]; then
+  echo "Nerd Font data missing; run git submodule update --init --recursive" >&2
+  exit 1
+fi
+
 # Pre-process data for better performance if not already done
 if [ ! -f "$PROCESSED_CACHE" ] || [ "$NERD_TXT_FILE" -nt "$PROCESSED_CACHE" ]; then
   echo "Processing NerdFont data for better performance..."
