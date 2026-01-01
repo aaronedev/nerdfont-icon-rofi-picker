@@ -119,6 +119,7 @@ ROFI_ARGS=(
   -no-custom
   -format "s"
   -markup-rows
+  # -no-config  # Skip system config to avoid theme conflicts
 )
 
 # Use isolated config and theme files
