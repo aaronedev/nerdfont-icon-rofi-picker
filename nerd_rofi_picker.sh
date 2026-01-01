@@ -40,8 +40,15 @@ mkdir -p "$CACHE_DIR"
 
 # Initialize or update submodule if needed
 if [ ! -f "$NERD_TXT_FILE" ]; then
+  if ! command -v git >/dev/null 2>&1 || [ ! -f "$SCRIPT_DIR/.gitmodules" ]; then
+    echo "Error: NerdFont data is missing. Clone this repository with submodules (git clone --recurse-submodules) or run 'git submodule update --init --recursive' in a git checkout." >&2
+    exit 1
+  fi
   echo "Initializing NerdFont data submodule..."
-  (cd "$SCRIPT_DIR" && git submodule update --init --recursive)
+  if ! (cd "$SCRIPT_DIR" && git submodule update --init --recursive); then
+    echo "Error: Failed to initialize NerdFont data. Clone this repository with submodules (git clone --recurse-submodules) or run 'git submodule update --init --recursive' in a git checkout." >&2
+    exit 1
+  fi
 fi
 
 # Check if we should update (once every 7 days)
