@@ -179,7 +179,9 @@ copy_to_clipboard() {
   elif command -v xclip >/dev/null 2>&1; then
     printf "%s" "$text" | xclip -selection clipboard
   else
+    echo "Warning: wl-copy and xclip not found; falling back to stdout." >&2
     printf "%s\n" "$text"
+    CLIPBOARD_FALLBACK=1
   fi
 }
 
@@ -191,4 +193,8 @@ copy_to_clipboard "$GLYPH"
 #   wtype --delay 30 "$GLYPH"
 # fi
 
-echo "Copied: $GLYPH — $DESC"
+if [[ ${CLIPBOARD_FALLBACK:-0} -eq 1 ]]; then
+  echo "Copied (stdout fallback): $GLYPH — $DESC"
+else
+  echo "Copied: $GLYPH — $DESC"
+fi
