@@ -1,6 +1,22 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+require_cmd() {
+  local cmd="$1"
+  if ! command -v "$cmd" >/dev/null 2>&1; then
+    echo "Error: Required command '$cmd' not found in PATH." >&2
+    exit 1
+  fi
+}
+
+require_cmd rofi
+require_cmd git
+require_cmd awk
+
+if ! command -v wl-copy >/dev/null 2>&1 && ! command -v xclip >/dev/null 2>&1; then
+  echo "Warning: Neither wl-copy nor xclip found; clipboard copy will fall back to stdout." >&2
+fi
+
 # Handle command line arguments
 if [[ "${1:-}" == "--update" ]]; then
   echo "Force updating NerdFont data..."
