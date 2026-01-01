@@ -133,6 +133,11 @@ done < <(compgen -e)
 
 CHOICE=$(cat "$PROCESSED_CACHE" | env -i "${CLEAN_ENV[@]}" rofi "${ROFI_ARGS[@]}") || exit 1
 
+if [[ -z "$CHOICE" ]]; then
+  echo "No selection made."
+  exit 0
+fi
+
 # Extract glyph (first token) and description (rest)
 GLYPH=$(awk '{print $1; exit}' <<<"$CHOICE")
 DESC=$(awk '{$1=""; sub(/^ /,""); print}' <<<"$CHOICE")
