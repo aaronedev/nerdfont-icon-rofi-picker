@@ -172,6 +172,11 @@ if [[ $ROFI_STATUS -ne 0 ]]; then
   exit 1
 fi
 
+if [[ -z "$CHOICE" ]]; then
+  echo "No selection made."
+  exit 0
+fi
+
 # Extract glyph (first token) and description (rest)
 GLYPH=$(awk '{print $1; exit}' <<<"$CHOICE")
 DESC=$(awk '{$1=""; sub(/^ /,""); print}' <<<"$CHOICE")
