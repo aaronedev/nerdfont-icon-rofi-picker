@@ -131,7 +131,18 @@ while IFS= read -r env_name; do
   add_env_var "$env_name" "${!env_name-}"
 done < <(compgen -e)
 
-CHOICE=$(cat "$PROCESSED_CACHE" | env -i "${CLEAN_ENV[@]}" rofi "${ROFI_ARGS[@]}") || exit 1
+set +e
+CHOICE=$(cat "$PROCESSED_CACHE" | env -i "${CLEAN_ENV[@]}" rofi "${ROFI_ARGS[@]}")
+ROFI_STATUS=$?
+set -e
+
+if [[ $ROFI_STATUS -eq 1 || -z "$CHOICE" ]]; then
+  exit 0
+fi
+
+if [[ $ROFI_STATUS -ne 0 ]]; then
+  exit 1
+fi
 
 # Extract glyph (first token) and description (rest)
 GLYPH=$(awk '{print $1; exit}' <<<"$CHOICE")
