@@ -10,7 +10,6 @@ require_cmd() {
 }
 
 require_cmd rofi
-require_cmd git
 require_cmd awk
 
 if ! command -v wl-copy >/dev/null 2>&1 && ! command -v xclip >/dev/null 2>&1; then
@@ -63,7 +62,6 @@ get_script_dir() {
   echo "$(cd -P "$(dirname "$script_path")" && pwd)"
 }
 
-
 # CONFIG: Paths and settings
 SCRIPT_DIR=$(get_script_dir)
 DATA_DIR="$SCRIPT_DIR/data"
@@ -76,15 +74,33 @@ CONFIG_FILE="$SCRIPT_DIR/rofi_config"
 mkdir -p "$CACHE_DIR"
 
 # Initialize or update submodule if needed
-if [ ! -f "$NERD_TXT_FILE" ]; then
-  if ! command -v git >/dev/null 2>&1 || [ ! -f "$SCRIPT_DIR/.gitmodules" ]; then
-    echo "Error: NerdFont data is missing. Clone this repository with submodules (git clone --recurse-submodules) or run 'git submodule update --init --recursive' in a git checkout." >&2
-    exit 1
+DATA_URL="https://raw.githubusercontent.com/8bitmcu/NerdFont-Cheat-Sheet/master/nerdfont.txt"
+
+download_data() {
+  echo "Downloading NerdFont data from upstream..."
+  mkdir -p "$DATA_DIR"
+  if command -v curl >/dev/null 2>&1; then
+    curl -fLo "$NERD_TXT_FILE" "$DATA_URL"
+  elif command -v wget >/dev/null 2>&1; then
+    wget -O "$NERD_TXT_FILE" "$DATA_URL"
+  else
+    return 1
   fi
-  echo "Initializing NerdFont data submodule..."
-  if ! (cd "$SCRIPT_DIR" && git submodule update --init --recursive); then
-    echo "Error: Failed to initialize NerdFont data. Clone this repository with submodules (git clone --recurse-submodules) or run 'git submodule update --init --recursive' in a git checkout." >&2
-    exit 1
+}
+
+if [ ! -f "$NERD_TXT_FILE" ]; then
+  # Try git submodule first if available
+  if [ -d "$SCRIPT_DIR/.git" ] && command -v git >/dev/null 2>&1; then
+    echo "Initializing NerdFont data submodule..."
+    (cd "$SCRIPT_DIR" && git submodule update --init --recursive) || true
+  fi
+
+  # Fallback to direct download
+  if [ ! -f "$NERD_TXT_FILE" ]; then
+    if ! download_data; then
+      echo "Error: NerdFont data missing. Clone recursively or install curl/wget to download." >&2
+      exit 1
+    fi
   fi
 fi
 
@@ -97,8 +113,22 @@ if [ ! -f "$LAST_UPDATE_FILE" ] || [ $(($(date +%s) - $(cat "$LAST_UPDATE_FILE" 
 fi
 
 if [ "$SHOULD_UPDATE" = true ] || [ "$FORCE_UPDATE" = true ]; then
-  echo "Updating NerdFont data..."
-  if (cd "$SCRIPT_DIR" && git submodule update --remote --merge data); then
+  echo "Checking for NerdFont data updates..."
+  UPDATED=false
+
+  if [ -d "$SCRIPT_DIR/.git" ] && command -v git >/dev/null 2>&1; then
+    if (cd "$SCRIPT_DIR" && git submodule update --remote --merge data 2>/dev/null); then
+      UPDATED=true
+    fi
+  fi
+
+  if [ "$UPDATED" = false ]; then
+    if download_data; then
+      UPDATED=true
+    fi
+  fi
+
+  if [ "$UPDATED" = true ]; then
     date +%s >"$LAST_UPDATE_FILE"
     rm -f "$PROCESSED_CACHE"
   else
@@ -107,7 +137,7 @@ if [ "$SHOULD_UPDATE" = true ] || [ "$FORCE_UPDATE" = true ]; then
 fi
 
 if [ ! -f "$NERD_TXT_FILE" ]; then
-  echo "Nerd Font data missing; run git submodule update --init --recursive" >&2
+  echo "Critical: Nerd Font data missing." >&2
   exit 1
 fi
 
