@@ -28,7 +28,10 @@ if [[ "${1:-}" == "--help" || "${1:-}" == "-h" ]]; then
   echo "  --update    Force update Nerd Font data"
   echo ""
   echo "Keybindings:"
-  echo "  Enter       Copy selected icon to clipboard"
+  echo "  Enter       Copy selected icon(s) (Glyph) and exit"
+  echo "  Alt+n       Copy Name (e.g., nf-fa-home)"
+  echo "  Alt+h       Copy Hex Code (e.g., f015)"
+  echo "  Alt+c       Copy CSS Class (e.g., .nf-fa-home)"
   echo "  Left/Right  Navigate between columns"
   echo "  Ctrl+b      Move cursor backward"
   echo "  Ctrl+f      Move cursor forward"
@@ -174,6 +177,9 @@ ROFI_ARGS=(
   -kb-row-right "Right"
   -kb-move-char-back "Control+b"
   -kb-move-char-forward "Control+f"
+  -kb-custom-1 "Alt+n"
+  -kb-custom-2 "Alt+h"
+  -kb-custom-3 "Alt+c"
   # -no-config  # Skip system config to avoid theme conflicts
 )
 
@@ -220,22 +226,64 @@ CHOICE=$(cat "$PROCESSED_CACHE" | env -i "${CLEAN_ENV[@]}" rofi "${ROFI_ARGS[@]}
 ROFI_STATUS=$?
 set -e
 
-if [[ $ROFI_STATUS -eq 1 || -z "$CHOICE" ]]; then
-  exit 0
-fi
+# Exit code 10 = custom-1 (Alt+n), 11 = custom-2 (Alt+h), 12 = custom-3 (Alt+c)
+# Standard success = 0
 
-if [[ $ROFI_STATUS -ne 0 ]]; then
+if [[ $ROFI_STATUS -ne 0 && $ROFI_STATUS -ne 10 && $ROFI_STATUS -ne 11 && $ROFI_STATUS -ne 12 ]]; then
   exit 1
 fi
 
-if [[ -z "$CHOICE" ]]; then
-  echo "No selection made."
-  exit 0
-fi
+# Extract glyphs and descriptions based on selection
+FINAL_TEXT=""
+DESC=""
 
-# Extract glyph (first token) and description (rest)
-GLYPH=$(awk '{print $1; exit}' <<<"$CHOICE")
-DESC=$(awk '{$1=""; sub(/^ /,""); print}' <<<"$CHOICE")
+case "$ROFI_STATUS" in
+0) # Enter -> Glyph
+  FINAL_TEXT=$(awk '{printf "%s", $1}' <<<"$CHOICE")
+  DESC=$(awk '{$1=""; sub(/^ /,""); print}' <<<"$CHOICE" | paste -sd ", " -)
+  ;;
+10) # Alt+n -> Name
+  # Extract name parts and join with hyphens
+  # Input: "    nf fa fa" -> Output: "nf-fa-fa"
+  FINAL_TEXT=$(awk '{
+      s = ""
+      for (i=2; i<=NF; i++) s = s (i==2 ? "" : "-") $i
+      print s
+    }' <<<"$CHOICE" | paste -sd " " -)
+  DESC="Names: $FINAL_TEXT"
+  ;;
+11) # Alt+h -> Hex
+  # We use python3 for reliable unicode->hex conversion if available
+  FINAL_TEXT=""
+  if command -v python3 >/dev/null 2>&1; then
+    while IFS= read -r line; do
+      glyph=$(echo "$line" | awk '{print $1}')
+      # Convert char to hex code point
+      code=$(python3 -c "print(f'{ord(\"$glyph\"):x}')")
+      FINAL_TEXT+="${code} "
+    done <<<"$CHOICE"
+  else
+    # Fallback: Just return names and warn
+    FINAL_TEXT=$(awk '{
+          s = ""
+          for (i=2; i<=NF; i++) s = s (i==2 ? "" : "-") $i
+          print s
+       }' <<<"$CHOICE" | paste -sd " " -)
+    DESC="Warning: Python3 missing for Hex. Copied Names: $FINAL_TEXT"
+  fi
+  FINAL_TEXT=${FINAL_TEXT%" "} # Trim trailing space
+  [ -z "$DESC" ] && DESC="Hex: $FINAL_TEXT"
+  ;;
+12) # Alt+c -> CSS Class
+  # Join with hyphens and prepend dot
+  FINAL_TEXT=$(awk '{
+      s = ""
+      for (i=2; i<=NF; i++) s = s (i==2 ? "" : "-") $i
+      print "."s
+    }' <<<"$CHOICE" | paste -sd " " -)
+  DESC="CSS: $FINAL_TEXT"
+  ;;
+esac
 
 # Function to copy text to the system clipboard
 copy_to_clipboard() {
@@ -251,16 +299,11 @@ copy_to_clipboard() {
   fi
 }
 
-# copy to clipboard (Wayland wl-copy; fall back to xclip)
-copy_to_clipboard "$GLYPH"
-
-# optional: type the glyph using wtype (Wayland) or xdotool for X
-# if command -v wtype >/dev/null 2>&1; then
-#   wtype --delay 30 "$GLYPH"
-# fi
+copy_to_clipboard "$FINAL_TEXT"
 
 if [[ ${CLIPBOARD_FALLBACK:-0} -eq 1 ]]; then
-  echo "Copied (stdout fallback): $GLYPH — $DESC"
+  echo "Copied (stdout fallback): $DESC"
 else
-  echo "Copied: $GLYPH — $DESC"
+  echo "Copied: $DESC"
 fi
+exit 0
