@@ -119,6 +119,10 @@ ROFI_ARGS=(
   -no-custom
   -format "s"
   -markup-rows
+  -kb-row-left "Left"
+  -kb-row-right "Right"
+  -kb-move-char-back "Control+b"
+  -kb-move-char-forward "Control+f"
   # -no-config  # Skip system config to avoid theme conflicts
 )
 
