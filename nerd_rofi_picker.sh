@@ -18,6 +18,27 @@ if ! command -v wl-copy >/dev/null 2>&1 && ! command -v xclip >/dev/null 2>&1; t
 fi
 
 # Handle command line arguments
+if [[ "${1:-}" == "--help" || "${1:-}" == "-h" ]]; then
+  echo "Nerd Font Rofi Picker"
+  echo "A simple rofi-based picker for Nerd Font icons."
+  echo ""
+  echo "Usage: $(basename "$0") [options]"
+  echo ""
+  echo "Options:"
+  echo "  --help      Show this help message"
+  echo "  --update    Force update Nerd Font data"
+  echo ""
+  echo "Keybindings:"
+  echo "  Enter       Copy selected icon to clipboard"
+  echo "  Left/Right  Navigate between columns"
+  echo "  Ctrl+b      Move cursor backward"
+  echo "  Ctrl+f      Move cursor forward"
+  echo "  Esc         Exit"
+  echo ""
+  echo "Repository: https://github.com/aaronedev/nerdfont-icon-rofi-picker"
+  exit 0
+fi
+
 if [[ "${1:-}" == "--update" ]]; then
   echo "Force updating NerdFont data..."
   FORCE_UPDATE=true
